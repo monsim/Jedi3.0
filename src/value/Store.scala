@@ -23,20 +23,27 @@ class Store(private var elems: ArrayBuffer[Value] = ArrayBuffer[Value]()) extend
 //    temp = temp.replaceAll
     var temp = "{"
     for (i <- elems) {
-      temp = temp + i.toString()
+      temp = temp + i.toString() + " "
     }
-    temp  
+    temp + "}"  
   }
   // returns store containing the elements of this transformed by trans
   def map(trans: Closure): Store = {
-    //trans.apply(elems.toList) returns a value though
-    val list = elems.toList.map((x:Value) => trans(x))  //closure takes params, body, defEnv
-    val b = new ArrayBuffer
-    for (i <- list){
-      b += i
+    var toReturn = new Store
+    for (i <- elems) {
+      toReturn.add(trans.apply(List(i)))
     }
-    new Store(b)
+    toReturn
   }
+  
+  
   // returns store containing the elements of this that passed test
-  def filter(test: Closure): Store = {???}
+  def filter(test: Closure): Store = {
+    var toReturn = new Store
+    for (i <- elems) {
+      if (test.apply(List(i)) == Boole(true))
+        toReturn.add(i)
+    }
+    toReturn
+  }
 }

@@ -2,10 +2,12 @@ package expression
 import context._
 import value._
 
-class Iteration(var condition: Expression, var body: Expression) extends SpecialForm{
+case class Iteration(var condition: Expression, var body: Expression) extends SpecialForm{
   def execute(env: Environment) = {  //CHECK TYPE
-    while (condition.execute(env) == Boole(true))
-      body.execute(env)
-    Notification.DONE
+    if (condition.execute(env).isInstanceOf[Boole]) {
+      while (condition.execute(env).asInstanceOf[Boole] == Boole(true))
+        body.execute(env)
+      Notification.DONE
+    } else throw new TypeException("The condition must be a Boole")
   }
 }

@@ -8,17 +8,17 @@ class Jedi3Parsers extends Jedi2Parsers {
   
   // assignment ::= identifier ~ "=" ~ expression
   def assignment: Parser[Assignment] = identifier ~ "=" ~ expression ^^{
-    case id ~ "=" ~ exp => new Assignment(id, exp)
+    case id ~ "=" ~ exp =>  Assignment(id, exp)
   }
   
   // iteration ::= "while" ~ "(" ~ expression ~ ")" ~ expression
   def iteration: Parser[Iteration] = "while" ~ "(" ~ expression ~ ")" ~ expression ^^{
-    case "while" ~ "(" ~ exp ~ ")" ~ exp1 => new Iteration(exp, exp1)
+    case "while" ~ "(" ~ exp ~ ")" ~ exp1 =>  Iteration(exp, exp1)
   }
   
   // dereference ::= "[" ~ expression ~ "]"
-  def dereference: Parser[Expression] = "[" ~ expression ~ "]" ^^{ //should it return an expression?
-    case "[" ~ exp ~ "]" => Expression(exp)
+  def dereference: Parser[Expression] = "[" ~> expression <~ "]" ^^ {
+    case exp => FunCall(Identifier("dereference"), List(exp))
   }
   
 
